@@ -1,0 +1,132 @@
+Design Algorithm:
+
+main
+  create keyboard Scanner
+  create names array for MAX_PEOPLE names
+  displayMessage(WELCOME_MESSAGE)
+  teeth = getFamilyData(keyboard, names)
+  processMenu(keyboard, names, teeth)
+  displayMessage(GOODBYE_MESSAGE)
+
+displayMessage
+  print the message it was given
+
+getFamilyData
+  familySize = getFamilySize
+  create teeth array for familySize people, 2 layers each
+  FOR each person
+    read name
+    teeth[person][UPPER] = getTeethRow(name, "uppers")
+    teeth[person][LOWER] = getTeethRow(name, "lowers")
+  return teeth
+
+getFamilySize
+  prompt for size
+  WHILE size < 1 OR size > MAX_PEOPLE
+    prompt "Invalid number of people" and read size again
+  return size
+
+getTeethRow
+  read line, convert to upper case
+  valid = false
+  WHILE NOT valid
+    IF NOT isValidTeeth(line) THEN prompt "Invalid teeth types", reread
+    ELSE IF line length > MAX_TEETH THEN prompt "Too many teeth", reread
+    ELSE valid = true
+  return line as characters
+
+isValidTeeth
+  valid = line is not empty
+  FOR each character in line
+    IF character is not I, B or M THEN valid = false
+  return valid
+
+processMenu
+  REPEAT
+    choice = getMenuChoice
+    IF choice is P THEN printRecords
+    ELSE IF choice is E THEN extractTooth
+    ELSE IF choice is R THEN reportRootCanals
+  UNTIL choice is X
+
+getMenuChoice
+  prompt and read choice, convert to upper case
+  WHILE NOT isMenuOption(choice)
+    prompt "Invalid menu option" and reread
+  return choice
+
+isMenuOption
+  valid = false
+  IF string is one character THEN
+    valid = character is P, E, R or X
+  return valid
+
+printRecords
+  FOR each person
+    print name
+    printRow for uppers
+    printRow for lowers
+
+printRow
+  print label
+  FOR each tooth in row
+    print tooth number (from 1) and tooth type
+  end the line
+
+extractTooth
+  person = getFamilyMember
+  layer = getLayer
+  IF NOT hasTooth(row) THEN tell user there is nothing to extract
+  ELSE
+    tooth = getToothNumber
+    set that tooth to 'M'
+
+getFamilyMember
+  read name
+  found = NOT_FOUND
+  WHILE found is NOT_FOUND
+    search the first familySize names for a match (ignoring case)
+    IF not found THEN prompt "Invalid family member" and reread
+  return found
+
+getLayer
+  read layer letter, convert to upper case
+  WHILE NOT isLayerLetter(letter)
+    prompt "Invalid layer" and reread
+  IF letter is U THEN layer = UPPER ELSE layer = LOWER
+  return layer
+
+isLayerLetter
+  valid = false
+  IF string is one character THEN
+    valid = character is U or L
+  return valid
+
+hasTooth
+  return true if any tooth in the row is not 'M'
+
+getToothNumber
+  read number
+  WHILE NOT valid
+    IF number < 1 OR number > number of teeth THEN "Invalid tooth number"
+    ELSE IF tooth is 'M' THEN "Missing tooth"
+    ELSE valid = true
+    (if not valid, read number again)
+  return number - 1 (array index)
+
+reportRootCanals
+  I = countType('I'), B = countType('B'), M = countType('M')
+  IF I > 0 THEN
+    disc = B*B + 4*I*M
+    root1 = (-B + sqrt(disc)) / (2*I)
+    root2 = (-B - sqrt(disc)) / (2*I)
+    print both roots
+  ELSE IF B > 0 THEN
+    print the single root M / B
+  ELSE print that there are no root canals
+
+countType
+  count = 0
+  FOR each person, FOR each layer, FOR each tooth
+    IF tooth equals type THEN count = count + 1
+  return count
